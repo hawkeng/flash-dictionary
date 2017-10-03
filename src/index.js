@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import './index.css';
-import App from './components/App';
+import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 render((

@@ -40,9 +40,13 @@ const mockData = [
 ];
 
 const api = {
-  find({ word }={}) {
+  find({ word, id }={}) {
     if (word !== undefined && word.length) {
       return Promise.resolve(mockData.find(w => w.word === word));
+    }
+    if (id !== undefined) {
+      id = parseInt(id, 10);
+      return Promise.resolve(mockData.find(w => w.id === id));
     }
     return Promise.resolve(mockData);
   }
