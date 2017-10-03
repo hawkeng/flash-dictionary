@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { Header, Icon, Divider, Container } from 'semantic-ui-react';
 import wordAPI from '../word.api';
 
 class WordDetail extends Component {
@@ -29,10 +31,19 @@ class WordDetail extends Component {
     }
     
     return (
-      <div>
-        <h2>{word.word}</h2>
-        <hr />
-        <div>
+      <Container>
+        <Header as='h2' style={{ marginTop: 20 }}>
+          <Link to='/'>
+            <Icon name='angle left' />
+          </Link>
+          <Header.Content>
+            {word.word}
+          </Header.Content>
+        </Header>
+      
+        <Divider />
+      
+        <Container textAlign='justified'>
           {word.definitions.map((def, i) => (
             <div key={i}>
               <span>{`(${ def.type })`}</span>
@@ -43,8 +54,8 @@ class WordDetail extends Component {
               </div>
             </div>
           ))}
-        </div>
-      </div>
+        </Container>
+      </Container>
     );
   }
 }
