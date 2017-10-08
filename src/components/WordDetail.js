@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Header, Icon, Divider, Container } from 'semantic-ui-react';
-import wordAPI from '../word.api';
+import wordAPI from '../lib/word.api';
 
 class WordDetail extends Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import wordAPI from '../word.api';
+import wordAPI from '../lib/word.api';
 
 class WordList extends Component {
   constructor(props) {
