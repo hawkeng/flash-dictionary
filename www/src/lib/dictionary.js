@@ -1,6 +1,8 @@
 const dictionary = {
   async getWord(word) {
-    const definitions = mapQSelector(document, '.def-block', el => {
+    const infoNode = await getInfoNode(word);
+    
+    const definitions = mapQSelector(infoNode, '.def-block', el => {
       return {
         type: getWordType(el),
         definition: getDefinition(el),
@@ -9,7 +11,7 @@ const dictionary = {
       }
     });
 
-    const runons = mapQSelector(document, '.runon', el => {
+    const runons = mapQSelector(infoNode, '.runon', el => {
       return {
         title: getRunonTitle(el),
         type: getWordType(el),
@@ -19,7 +21,7 @@ const dictionary = {
       };
     });
 
-    const phrases = mapQSelector(document, '.phrase-block', el => {
+    const phrases = mapQSelector(infoNode, '.phrase-block', el => {
       return {
         phrase: getPhrase(el),
         definition: getDefinition(el),
@@ -30,13 +32,20 @@ const dictionary = {
 
     return {
       word,
-      sound: document.querySelector('.sound.us').dataset.srcMp3,
+      sound: infoNode.querySelector('.sound.us').dataset.srcMp3,
       definitions,
       runons,
       phrases
     };
   },
 };
+
+async function getInfoNode(word) {
+  const response = await fetch(`http://dictionary.cambridge.org/dictionary/english-spanish/${word}`);
+  const div = document.createElement('div');
+  div.innerHTML = await response.text();
+  return div;
+}
 
 function mapQSelector(context, selector, fn) {
   return Array.prototype.map.call(context.querySelectorAll(selector), fn);
@@ -69,3 +78,5 @@ function getPhrase(context) {
 function getRunonTitle(context) {
   return context.querySelector('.w').textContent.trim();
 }
+
+export default dictionary;
