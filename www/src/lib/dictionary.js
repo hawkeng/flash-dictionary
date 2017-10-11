@@ -1,48 +1,62 @@
-const dictionary = {
-  async getWord(word) {
-    const infoNode = await getInfoNode(word);
-    
-    const definitions = mapQSelector(infoNode, '.def-block', el => {
-      return {
-        type: getWordType(el),
-        definition: getDefinition(el),
-        translation: getTranslation(el),
-        examples: getExamples(el)
-      }
-    });
+const getWord = async (word) => {
+  const infoNode = await getInfoNode(word);
 
-    const runons = mapQSelector(infoNode, '.runon', el => {
-      return {
-        title: getRunonTitle(el),
-        type: getWordType(el),
-        definition: getDefinition(el),
-        translation: getTranslation(el),
-        examples: getExamples(el)
-      };
-    });
-
-    const phrases = mapQSelector(infoNode, '.phrase-block', el => {
-      return {
-        phrase: getPhrase(el),
-        definition: getDefinition(el),
-        translation: getTranslation(el),
-        examples: getExamples(el)
-      };
-    });
-
+  if (infoNode === null) {
+    return null;
+  }
+  
+  const definitions = mapQSelector(infoNode, '.def-block', el => {
     return {
-      word,
-      sound: infoNode.querySelector('.sound.us').dataset.srcMp3,
-      definitions,
-      runons,
-      phrases
+      type: getWordType(el),
+      definition: getDefinition(el),
+      translation: getTranslation(el),
+      examples: getExamples(el)
+    }
+  });
+  
+  const runons = mapQSelector(infoNode, '.runon', el => {
+    return {
+      title: getRunonTitle(el),
+      type: getWordType(el),
+      definition: getDefinition(el),
+      translation: getTranslation(el),
+      examples: getExamples(el)
     };
-  },
+  });
+
+  const phrases = mapQSelector(infoNode, '.phrase-block', el => {
+    return {
+      phrase: getPhrase(el),
+      definition: getDefinition(el),
+      translation: getTranslation(el),
+      examples: getExamples(el)
+    };
+  });
+
+  return {
+    word,
+    sound: infoNode.querySelector('.sound.us').dataset.srcMp3,
+    definitions,
+    runons,
+    phrases
+  };
+};
+
+const getSuggestions = (text) => {
+  return fetch(
+    `http://dictionary.cambridge.org/autocomplete/english-spanish/?q=${text}&contentType=application%2Fjson%3B%20charset%3Dutf-8`)
+    .then(response => response.json())
+    .then(response => response.results);
 };
 
 async function getInfoNode(word) {
   const response = await fetch(`http://dictionary.cambridge.org/dictionary/english-spanish/${word}`);
   const div = document.createElement('div');
+  
+  if (response.url === 'http://dictionary.cambridge.org/dictionary/english-spanish/') {
+    return null;
+  }
+
   div.innerHTML = await response.text();
   return div;
 }
@@ -52,7 +66,8 @@ function mapQSelector(context, selector, fn) {
 }
 
 function getDefinition(context) {
-  return context.querySelector('.def').innerHTML;
+  const element = context.querySelector('.def');
+  return element ? element.innerHTML : null;
 }
 
 function getTranslation(context) {
@@ -79,4 +94,4 @@ function getRunonTitle(context) {
   return context.querySelector('.w').textContent.trim();
 }
 
-export default dictionary;
+export { getWord, getSuggestions };

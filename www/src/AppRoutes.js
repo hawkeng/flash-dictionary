@@ -1,19 +1,25 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { Container, Header } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import WordList from './components/WordList';
 import WordDetail from './components/WordDetail';
 import WordSearchBar from './components/WordSearchBar';
 
 const AppRoutes = () => (
-  <Container>
-    <Header>
-      <Route path='/' component={WordSearchBar} />
-    </Header>
+  <Grid>
+    <Grid.Row style={{ margin: 10 }}>
+      <Grid.Column>
+        <Route path='/' component={WordSearchBar} />
+      </Grid.Column>
+    </Grid.Row>
 
-    <Route exact path='/' component={WordList} />
-    <Route path='/word/:id' component={WordDetail} />
-  </Container>
+    <Grid.Row>
+      <Grid.Column>
+        <Route exact path='/' component={WordList} />
+        <Route path='/word/:word' component={WordDetail} />
+      </Grid.Column>
+    </Grid.Row>
+  </Grid>
 );
 
 export default AppRoutes;

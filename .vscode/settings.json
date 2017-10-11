@@ -1,0 +1,10 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/.git": true,
+        "**/platforms": true,
+        "**/plugins": true,
+        "**/res": true
+    }
+}

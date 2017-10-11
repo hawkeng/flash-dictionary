@@ -11,28 +11,35 @@ class WordDetail extends Component {
     
     if (props.word !== undefined) {
       this.state = { word: props.word };
-    } else if (props.match !== undefined && props.match.params.id !== undefined) {
-      this.state = { wordId: props.match.params.id };
+    } else if (props.match !== undefined && props.match.params.word !== undefined) {
+      this.state = { lookup: props.match.params.word };
     }
   }
   
   async componentDidMount() {
     if (this.state.word === undefined) {
-      const word = await wordAPI.find({ id: this.state.wordId });
-      this.setState({ word });
+      const word = await wordAPI.find({ word: this.state.lookup });
+      this.setState({ word, lookup: null });
     }
   }
   
   render() {
     const { word } = this.state;
     
-    if (word === undefined) {
-      return <div>Word not found</div>;
+    if (!word) {
+      return (
+        <div>
+          <Link to='/'>
+            <Icon name='angle left' size='large' />
+          </Link>
+          Word not found
+        </div>
+      );
     }
     
     return (
-      <Container>
-        <Header as='h2' style={{ marginTop: 20 }}>
+      <div>
+        <Header as='h2'>
           <Link to='/'>
             <Icon name='angle left' />
           </Link>
@@ -55,7 +62,7 @@ class WordDetail extends Component {
             </div>
           ))}
         </Container>
-      </Container>
+      </div>
     );
   }
 }
