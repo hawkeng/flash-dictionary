@@ -1,9 +1,7 @@
 const getWord = async (word) => {
   const infoNode = await getInfoNode(word);
 
-  if (infoNode === null) {
-    return null;
-  }
+  if (infoNode === null) return;
   
   const definitions = mapQSelector(infoNode, '.def-block', el => {
     return {
@@ -67,31 +65,36 @@ function mapQSelector(context, selector, fn) {
 
 function getDefinition(context) {
   const element = context.querySelector('.def');
-  return element ? element.innerHTML : null;
+  return element ? text(element) : null;
 }
 
 function getTranslation(context) {
-  return context.querySelector('.trans').textContent.trim();
+  return text(context.querySelector('.trans'));
 }
 
 function getExamples(context) {
-  return mapQSelector(context, '.eg', el => el.innerHTML);
+  return mapQSelector(context, '.eg', text);
 }
 
 function getWordType(context) {
-  return context
+  return text(
+    context
     .closest('.datasource')
     .querySelector('.posgram .pos')
-    .textContent
-    .trim();
+  );
 }
 
 function getPhrase(context) {
-  return context.querySelector('.phrase').textContent.trim();
+  return text(context.querySelector('.phrase'));
 }
 
 function getRunonTitle(context) {
-  return context.querySelector('.w').textContent.trim();
+  return text(context.querySelector('.w'));
+}
+
+function text(element) {
+  // Replacing due to a bug with firebase
+  return element.textContent.trim().replace(/’/g, "'");
 }
 
 export { getWord, getSuggestions };

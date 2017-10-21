@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Header, Icon, Divider, Container } from 'semantic-ui-react';
+import { Header, Icon, Divider, Container, Segment } from 'semantic-ui-react';
 import wordAPI from '../lib/word.api';
+import './WordDetail.css';
 
 class WordDetail extends Component {
   constructor(props) {
@@ -9,18 +10,25 @@ class WordDetail extends Component {
     
     this.state = {};
     
-    if (props.word !== undefined) {
-      this.state = { word: props.word };
-    } else if (props.match !== undefined && props.match.params.word !== undefined) {
+    if (props.match !== undefined && 
+        props.match.params.word !== undefined) {
+
       this.state = { lookup: props.match.params.word };
+    }
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    if (nextProps.match !== undefined && 
+        nextProps.match.params.word !== this.state.word.word) {
+
+      const word = await wordAPI.find({ word: nextProps.match.params.word });
+      this.setState({ word });
     }
   }
   
   async componentDidMount() {
-    if (this.state.word === undefined) {
-      const word = await wordAPI.find({ word: this.state.lookup });
-      this.setState({ word, lookup: null });
-    }
+    const word = await wordAPI.find({ word: this.state.lookup });
+    this.setState({ word, lookup: null });
   }
   
   render() {
@@ -49,16 +57,29 @@ class WordDetail extends Component {
         </Header>
       
         <Divider />
+
+        <div>{word.definitions.length} Definitions</div>
+
+        <Divider />
       
         <Container textAlign='justified'>
           {word.definitions.map((def, i) => (
             <div key={i}>
-              <span>{`(${ def.type })`}</span>
-              <span>{def.definition}</span>
-              <p>{def.translation}</p>
-              <div>
-                {def.examples.map((example, i) => <p key={i}>{example}</p>)}
-              </div>
+              <span className='word-type'>
+                {`(${ def.type })`}
+              </span>
+
+              <span className='definition'>{def.definition}</span>
+
+              <p className='translation'>{def.translation}</p>
+              
+              <Segment basic>
+                {def.examples && def.examples.map((example, i) => 
+                  <q key={i}>{example}</q>
+                )}
+              </Segment>
+
+              {i !== (word.definitions.length - 1) ? <Divider /> : null}
             </div>
           ))}
         </Container>

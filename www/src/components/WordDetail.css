@@ -1,0 +1,26 @@
+.word-type {
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.word-type:after {
+    content: ' • '
+}
+
+.definition {
+    font-weight: bold;
+}
+
+q {
+    font-style: italic;
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+.translation {
+    font-weight: bold;
+    opacity: 0.65;
+}
+
+.translation:before {
+    content: '→'
+}
