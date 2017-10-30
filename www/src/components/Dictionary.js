@@ -1,4 +1,9 @@
-const getWord = async (word) => {
+import React from 'react';
+
+const Dictionary = ({ children }) => 
+    React.Children.only(children({ findWord, getSuggestions }))
+
+async function findWord (word) {
   const infoNode = await getInfoNode(word);
 
   if (infoNode === null) return;
@@ -31,21 +36,23 @@ const getWord = async (word) => {
     };
   });
 
+  const soundElement = infoNode.querySelector('.sound.us');
+
   return {
     word,
-    sound: infoNode.querySelector('.sound.us').dataset.srcMp3,
+    sound: soundElement && soundElement.dataset.srcMp3,
     definitions,
     runons,
     phrases
   };
-};
+}
 
-const getSuggestions = (text) => {
+function getSuggestions(text) {
   return fetch(
     `http://dictionary.cambridge.org/autocomplete/english-spanish/?q=${text}&contentType=application%2Fjson%3B%20charset%3Dutf-8`)
     .then(response => response.json())
     .then(response => response.results);
-};
+}
 
 async function getInfoNode(word) {
   const response = await fetch(`http://dictionary.cambridge.org/dictionary/english-spanish/${word}`);
@@ -97,4 +104,4 @@ function text(element) {
   return element.textContent.trim().replace(/’/g, "'");
 }
 
-export { getWord, getSuggestions };
+export default Dictionary;

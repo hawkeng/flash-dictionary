@@ -1,42 +1,21 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { List, Segment, Icon } from 'semantic-ui-react';
-import wordAPI from '../lib/word.api';
+import React from 'react';
+import { List, Icon } from 'semantic-ui-react';
 
-class WordList extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      words: []
-    };
-  }
-  
-  async componentDidMount() {
-    const words = await wordAPI.find();
-    this.setState({ words });
-  }
-  
-  render() {
-    return (
-      <Segment basic>
-        <List divided relaxed='very' size='large'>
-          {this.state.words.map((word, i) => (
-            <List.Item key={i}>
-              <List.Content floated='right'>
-                <Icon color='yellow' name='star' />
-              </List.Content>
-              <List.Content>
-                <List.Header>
-                  <Link to={`/word/${word.word}`}>{word.word}</Link>
-                </List.Header>
-              </List.Content>
-            </List.Item>
-          ))}
-        </List>
-      </Segment>
-    );
-  }
-}
+const WordList = ({ words, onItemClick }) => {
+  return (
+    <List divided relaxed='very' size='large'>
+      {words.map((word) => (
+        <List.Item key={word.id}>
+          <List.Content floated='right'>
+            <Icon color='yellow' name='star' />
+          </List.Content>
+          <List.Content>
+            <List.Header as='a' onClick={() => onItemClick(word)}>{word.word}</List.Header>
+          </List.Content>
+        </List.Item>
+      ))}
+    </List>
+  );
+};
 
 export default WordList;

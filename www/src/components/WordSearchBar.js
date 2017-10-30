@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
 import { Search } from 'semantic-ui-react';
-import { getSuggestions } from '../lib/dictionary';
 
 class WordSearchBar extends Component {
   state = {
@@ -13,42 +11,46 @@ class WordSearchBar extends Component {
   handleChange = async (event, { value }) => {
     this.setState({ value, loading: true });
     
-    const results = (await getSuggestions(value))
+    const results = (await this.props.getSuggestions(value))
       .map((item, i) => (
         {
           key: i,
           title: item.searchtext
         }
       ));
+
     this.setState({ results, loading: false });
   };
 
   handleSelect = (event, { result }) => {
     this.setState({ value: result.title });
+    this.props.onSelect(result.title);
   };
 
-  handleSelectWithHistory = (history) => (event, { result }) => {
-    this.handleSelect(event, { result });
-    history.push(`/word/${result.title}`);
-  };
+  handleOnBlur = () => {
+    this.setState({ 
+      value: '',
+      results: [],
+      loading: false 
+    });
+  }
 
   render() {
     const { loading, value, results } = this.state;
 
     return (
-      <Route render={({ history }) => 
-        <Search 
-          loading={loading}
-          placeholder='Search for word'
-          onSearchChange={this.handleChange}
-          onResultSelect={this.handleSelectWithHistory(history)}
-          results={results}
-          value={value}
-          minCharacters={2}
-          input={{ fluid: true }}
-          size='large'
-          fluid={true} />
-      } />
+      <Search 
+        loading={loading}
+        placeholder='Search for word'
+        onSearchChange={this.handleChange}
+        onResultSelect={this.handleSelect}
+        /* onBlur={this.handleOnBlur} */
+        results={results}
+        value={value}
+        minCharacters={2}
+        input={{ fluid: true }}
+        size='large'
+        fluid={true} />
     );
   }
 }
