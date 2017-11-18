@@ -1,6 +1,7 @@
 {
   "name": "flash-dictionary",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "firebase": "^4.6.0",
