@@ -56,6 +56,15 @@ class WordStore extends Component {
     this.setState({ wordIndex: newIndex });
   }
 
+  removeFromIndex = (word) => {
+    const key = this.getIndexKey(word);
+    const { wordIndex: oldIndex } = this.state;
+    const newIndex = { ...oldIndex };
+    delete newIndex[key];
+    this.storeRef.child(key).remove();
+    this.setState({ wordIndex: newIndex });
+  }
+
   visitWord = (word) => {
     const key = this.getIndexKey(word);
     const { wordIndex: oldIndex } = this.state;
@@ -72,9 +81,9 @@ class WordStore extends Component {
   }
 
   render() {
-    const { addToIndex, getWord, visitWord } = this;
+    const { addToIndex, getWord, visitWord, removeFromIndex } = this;
     return React.Children.only(
-      this.props.children({ addToIndex, getWord, visitWord })
+      this.props.children({ addToIndex, getWord, visitWord, removeFromIndex })
     );
   }
 }

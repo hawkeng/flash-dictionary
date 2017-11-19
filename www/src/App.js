@@ -54,12 +54,18 @@ class App extends Component {
     history.push(`word/${word}`);
   }
 
+  removeWord = ({ word, removeFromIndex }) => {
+    word = word.replace(/\s/g, '-').toLowerCase();
+    
+    removeFromIndex(word);
+  }
+
   render() {
     return (
       <Dictionary>
         {({ findWord, getSuggestions }) =>
           <WordStore>
-            {({ addToIndex, getWord, visitWord }) => 
+            {({ addToIndex, getWord, visitWord, removeFromIndex }) => 
               <Grid>
                 <Grid.Row style={{ margin: 10 }}>
                   <Grid.Column>
@@ -96,6 +102,7 @@ class App extends Component {
                               visitWord
                             })
                           }
+                          onItemRemove={({ word }) => this.removeWord({ word, removeFromIndex }) }
                         />
                       </Segment>
                     }/>
