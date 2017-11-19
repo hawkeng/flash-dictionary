@@ -14,7 +14,7 @@ class App extends Component {
     wordCache: {}
   }
 
-  loadWord = ({ word, history, addToIndex, getWord, findWord }) => {
+  loadWord = ({ word, history, addToIndex, getWord, findWord, visitWord }) => {
     if (typeof word !== 'string' || word.trim().length === 0) {
       return
     }
@@ -28,7 +28,6 @@ class App extends Component {
     const cacheWord = this.state.wordCache[word];
 
     if (cacheWord) {
-      // TODO: Increment times visited
       this.setState({
         loading: false,
         currentWord: cacheWord
@@ -49,6 +48,8 @@ class App extends Component {
     if (!indexWord) {
       addToIndex(word);
     }
+
+    visitWord(word);
     
     history.push(`word/${word}`);
   }
@@ -58,7 +59,7 @@ class App extends Component {
       <Dictionary>
         {({ findWord, getSuggestions }) =>
           <WordStore>
-            {({ addToIndex, getWord }) => 
+            {({ addToIndex, getWord, visitWord }) => 
               <Grid>
                 <Grid.Row style={{ margin: 10 }}>
                   <Grid.Column>
@@ -71,7 +72,8 @@ class App extends Component {
                             history,
                             addToIndex,
                             getWord,
-                            findWord
+                            findWord,
+                            visitWord
                           })
                         }/>
                     }/>
@@ -90,7 +92,8 @@ class App extends Component {
                               history,
                               addToIndex,
                               getWord,
-                              findWord 
+                              findWord,
+                              visitWord
                             })
                           }
                         />

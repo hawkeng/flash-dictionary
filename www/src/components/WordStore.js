@@ -56,10 +56,25 @@ class WordStore extends Component {
     this.setState({ wordIndex: newIndex });
   }
 
+  visitWord = (word) => {
+    const key = this.getIndexKey(word);
+    const { wordIndex: oldIndex } = this.state;
+    const oldWord = oldIndex[key];
+    const newIndex = {
+      ...oldIndex,
+      [key]: {
+        ...oldWord,
+        visited: oldWord.visited + 1
+      }
+    };
+    this.storeRef.update(newIndex);
+    this.setState({ wordIndex: newIndex });
+  }
+
   render() {
-    const { addToIndex, getWord } = this;
+    const { addToIndex, getWord, visitWord } = this;
     return React.Children.only(
-      this.props.children({ addToIndex, getWord })
+      this.props.children({ addToIndex, getWord, visitWord })
     );
   }
 }
