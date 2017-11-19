@@ -14,17 +14,17 @@ class App extends Component {
     wordCache: {}
   }
 
-  loadWord = ({ word, history, wordIndex, addToIndex, getIndexKey, findWord }) => {
-    if (typeof word !== 'string' || word.trim().length === 0) 
-      return;
+  loadWord = ({ word, history, addToIndex, getWord, findWord }) => {
+    if (typeof word !== 'string' || word.trim().length === 0) {
+      return
+    }
 
     this.setState({ loading: true });
 
     // Cambridge dictionary doesn't understand spaces
     word = word.replace(/\s/g, '-').toLowerCase();
 
-    // TODO: convert wordIndex and getIndexKey in getWord function
-    const indexWord = wordIndex[getIndexKey(word)];
+    const indexWord = getWord(word);
     const cacheWord = this.state.wordCache[word];
 
     if (cacheWord) {
@@ -53,26 +53,27 @@ class App extends Component {
     history.push(`word/${word}`);
   }
 
-  indexToList(index) {
-    return Object.values(index);
-  }
-
   render() {
     return (
       <Dictionary>
         {({ findWord, getSuggestions }) =>
           <WordStore>
-            {({ wordIndex, addToIndex, getIndexKey }) => 
+            {({ addToIndex, getWord }) => 
               <Grid>
                 <Grid.Row style={{ margin: 10 }}>
                   <Grid.Column>
                     <Route path='/' render={({ history }) => 
                       <WordSearchBar
                         getSuggestions={getSuggestions}
-                        onSelect={(word) => this.loadWord({
-                          word, history, wordIndex, 
-                          addToIndex, getIndexKey, findWord 
-                        })}/>
+                        onSelect={ word => 
+                          this.loadWord({
+                            word,
+                            history,
+                            addToIndex,
+                            getWord,
+                            findWord
+                          })
+                        }/>
                     }/>
                   </Grid.Column>
                 </Grid.Row>
@@ -82,11 +83,16 @@ class App extends Component {
                     <Route exact path='/' render={({ history }) => 
                       <Segment basic>
                         <WordList 
-                          words={this.indexToList(wordIndex)} 
-                          onItemClick={({ word }) => this.loadWord({
-                            word, history, wordIndex, 
-                            addToIndex, getIndexKey, findWord 
-                          })}
+                          words={ getWord() } 
+                          onItemClick={({ word }) => 
+                            this.loadWord({
+                              word,
+                              history,
+                              addToIndex,
+                              getWord,
+                              findWord 
+                            })
+                          }
                         />
                       </Segment>
                     }/>

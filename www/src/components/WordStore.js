@@ -32,6 +32,13 @@ class WordStore extends Component {
 
   getIndexKey = (word) => word.replace(/[.$#[\]/]/g, '-')
 
+  getWord = (word) => {
+    if (word) {
+      return this.state.wordIndex[ this.getIndexKey(word) ];
+    }
+    return Object.values(this.state.wordIndex);
+  }
+
   addToIndex = (word) => {
     const key = this.getIndexKey(word);
     const { wordIndex: oldIndex } = this.state;
@@ -50,10 +57,9 @@ class WordStore extends Component {
   }
 
   render() {
-    const { wordIndex } = this.state;
-    const { addToIndex, getIndexKey } = this;
+    const { addToIndex, getWord } = this;
     return React.Children.only(
-      this.props.children({ addToIndex, wordIndex, getIndexKey })
+      this.props.children({ addToIndex, getWord })
     );
   }
 }
