@@ -14,7 +14,7 @@ class App extends Component {
     wordCache: {}
   }
 
-  loadWord = ({ word, history, addToIndex, getWord, findWord, visitWord }) => {
+  loadWord = ({ word, history, dictionary, store }) => {
     if (typeof word !== 'string' || word.trim().length === 0) {
       return
     }
@@ -24,7 +24,7 @@ class App extends Component {
     // Cambridge dictionary doesn't understand spaces
     word = word.replace(/\s/g, '-').toLowerCase();
 
-    const indexWord = getWord(word);
+    const indexWord = store.getWord(word);
     const cacheWord = this.state.wordCache[word];
 
     if (cacheWord) {
@@ -33,7 +33,7 @@ class App extends Component {
         currentWord: cacheWord
       });
     } else {
-      findWord(word).then(wordObj => {
+      dictionary.findWord(word).then(wordObj => {
         const { wordCache } = this.state;
         this.setState({
           wordCache: {
@@ -46,40 +46,38 @@ class App extends Component {
     }
 
     if (!indexWord) {
-      addToIndex(word);
+      store.addToIndex(word);
     }
 
-    visitWord(word);
+    store.visitWord(word);
     
     history.push(`word/${word}`);
   }
 
-  removeWord = ({ word, removeFromIndex }) => {
+  removeWord = ({ word, store }) => {
     word = word.replace(/\s/g, '-').toLowerCase();
     
-    removeFromIndex(word);
+    store.removeFromIndex(word);
   }
 
   render() {
     return (
       <Dictionary>
-        {({ findWord, getSuggestions }) =>
+        {dictionary =>
           <WordStore>
-            {({ addToIndex, getWord, visitWord, removeFromIndex }) => 
+            {store => 
               <Grid>
                 <Grid.Row style={{ margin: 10 }}>
                   <Grid.Column>
                     <Route path='/' render={({ history }) => 
                       <WordSearchBar
-                        getSuggestions={getSuggestions}
+                        getSuggestions={dictionary.getSuggestions}
                         onSelect={ word => 
                           this.loadWord({
                             word,
                             history,
-                            addToIndex,
-                            getWord,
-                            findWord,
-                            visitWord
+                            dictionary,
+                            store
                           })
                         }/>
                     }/>
@@ -91,18 +89,16 @@ class App extends Component {
                     <Route exact path='/' render={({ history }) => 
                       <Segment basic>
                         <WordList 
-                          words={ getWord() } 
+                          words={ store.getWord() } 
                           onItemClick={({ word }) => 
                             this.loadWord({
                               word,
                               history,
-                              addToIndex,
-                              getWord,
-                              findWord,
-                              visitWord
+                              dictionary,
+                              store
                             })
                           }
-                          onItemRemove={({ word }) => this.removeWord({ word, removeFromIndex }) }
+                          onItemRemove={({ word }) => this.removeWord({ word, store }) }
                         />
                       </Segment>
                     }/>
