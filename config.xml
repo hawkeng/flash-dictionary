@@ -18,6 +18,9 @@
     <hook src="scripts/cleanBuildAssets.js" type="after_prepare" />
     <platform name="android">
         <allow-intent href="market:*" />
+        <icon src="res/icon/android/mdpi.png" density="mdpi" />
+        <icon src="res/icon/android/hdpi.png" density="hdpi" />
+        <icon src="res/icon/android/xhdpi.png" density="xhdpi" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
